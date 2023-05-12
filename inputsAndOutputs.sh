@@ -1,19 +1,7 @@
-#!/bin/bash
+touch output.txt
 
-# pipe for communication
-pipe=/tmp/my_pipe
+tmux new-session -d -s chat_session './chat > output.txt'
 
-# create the pipe if it doesn't exist
-if [[ ! -p $pipe ]]; then
-    mkfifo $pipe
-fi
+tail -f output.txt &
 
-# start the C program in the background
-./chat < $pipe | while read line
-do
-    # echo the response to the terminal
-    echo "Received: $line"
-    
-    # send new input to the C program
-    echo "This is a new input from bash" > $pipe
-done
+tmux send-keys -t chat_session "hello" Enter
